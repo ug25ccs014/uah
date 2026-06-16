@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Unified Academic Hub - Inbox and Messaging System">
+  <title>Inbox — Academic Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="logo-container">
+          <img src="assets/logo.png" class="logo" alt="Academic Hub"
+            onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+          <span id="logo-text" style="display:none;">Academic Hub</span>
+        </a>
+        <button class="menu-toggle" onclick="toggleSidebar()">✕</button>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="section-label">Main</div>
+        <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="inbox.html" class="active"><span class="nav-icon">💬</span> Messages <span
+            id="sidebarMsgBadge"></span></a>
+        <div class="section-label">Subjects</div>
+        <div id="sidebarSubjects"></div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="userAvatar"></div>
+          <div class="user-info">
+            <div class="name" id="userName"></div>
+            <div class="role" id="userRole"></div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm w-full mt-2" onclick="logout()">🚪 Sign Out</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- MAIN -->
+    <main class="main-content" style="padding:0;">
+      <div class="top-bar">
+        <div class="flex items-center gap-3">
+          <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+          <h2>💬 Inbox</h2>
+        </div>
+        <div class="top-bar-actions">
+          <button class="btn btn-primary btn-sm" onclick="openNewMessageModal()">✉️ New Message</button>
+          <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme"></button>
+        </div>
+      </div>
+
+      <div class="inbox-layout">
+        <!-- Conversation List -->
+        <div class="inbox-list" id="inboxList">
+          <div id="conversationsList"></div>
+          <div id="noConversations" class="empty-state hidden" style="padding:40px 20px;">
+            <div class="icon">💬</div>
+            <h3>No Messages</h3>
+            <p>Start a conversation!</p>
+          </div>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-area" id="chatArea">
+          <div id="chatPlaceholder" class="empty-state"
+            style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div class="icon">📨</div>
+            <h3>Select a conversation</h3>
+            <p>Choose a thread from the left to start chatting</p>
+          </div>
+          <div id="activeChatView" class="hidden" style="display:none;flex-direction:column;height:100%;">
+            <div class="chat-header">
+              <div class="flex items-center gap-3">
+                <button class="btn-icon" onclick="closeChatMobile()" style="display:none;" id="chatBackBtn">←</button>
+                <div>
+                  <h3 id="chatPartnerName"></h3>
+                  <div style="font-size:0.8rem;color:var(--text-muted);" id="chatPartnerRole"></div>
+                </div>
+              </div>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="chat-input">
+              <input type="text" id="chatInput" placeholder="Type a message..."
+                onkeypress="if(event.key==='Enter')sendChatMessage()">
+              <button class="btn btn-primary" onclick="sendChatMessage()">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- NEW MESSAGE MODAL -->
+  <div class="modal-overlay hidden" id="newMsgModal">
+    <div class="modal">
+      <h2>✉️ New Message</h2>
+      <div class="form-group">
+        <label for="newMsgRecipient">Recipient</label>
+        <select id="newMsgRecipient"></select>
+      </div>
+      <div class="form-group">
+        <label for="newMsgContent">Message</label>
+        <textarea id="newMsgContent" rows="4" placeholder="Type your message..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('newMsgModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="sendNewMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="script.js"></script>
+  <script>
+    requireAuth();
+    initTheme();
+    initInbox();
+  </script>
+</body>
+
+</html>

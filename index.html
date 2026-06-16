@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Unified Academic Hub - Login and Sign Up for IIIT Surat's academic management platform.">
+  <title>Unified Academic Hub — Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="auth-page" id="authPage">
+    <!-- INTRO CONTAINER -->
+    <div class="intro-container" id="introContainer">
+      <div class="intro-content">
+        <img src="assets/logo.png" class="intro-logo" alt="Academic Hub Logo"
+          onerror="this.style.display='none'; document.getElementById('intro-logo-text').style.display='block';">
+        <h1 id="intro-logo-text" style="display:none;" class="intro-title">Academic Hub</h1>
+        <p class="intro-subtitle">Welcome to IIIT Surat's Unified Academic Hub</p>
+        <button class="btn btn-primary btn-lg" onclick="showAuthPage()">Get Started →</button>
+      </div>
+    </div>
+
+    <div class="auth-container" id="authContainer" style="display:none;">
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <div class="auth-logo-wrapper">
+          <div class="logo-container" style="justify-content:center;">
+            <img src="assets/logo.png" class="logo" alt="Academic Hub Logo"
+              onerror="this.style.display='none'; document.getElementById('logo-text-login').style.display='block';">
+            <span id="logo-text-login" style="display:none;">Academic Hub</span>
+          </div>
+        </div>
+        <h1>Welcome Back</h1>
+        <p class="subtitle">Sign in to your academic portal</p>
+
+        <div class="role-toggle" id="loginRoleToggle">
+          <button type="button" class="active" data-role="student" onclick="setLoginRole('student')">🎓 Student</button>
+          <button type="button" data-role="teacher" onclick="setLoginRole('teacher')">👨‍🏫 Teacher</button>
+        </div>
+
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="loginEmail">Email</label>
+            <div class="input-icon">
+              <span class="icon">📧</span>
+              <input type="email" id="loginEmail" placeholder="you@iiitsurat.ac.in" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <div class="input-icon">
+              <span class="icon">🔒</span>
+              <input type="password" id="loginPassword" placeholder="Enter your password" required>
+            </div>
+          </div>
+          <div id="loginError" class="error-msg"></div>
+          <button type="submit" class="btn btn-primary" id="loginBtn">Sign In →</button>
+        </form>
+
+        <p class="auth-switch">Don't have an account? <a href="#" onclick="showSignup(); return false;">Sign Up</a></p>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signupForm" style="display:none;">
+        <div class="auth-logo-wrapper">
+          <div class="logo-container" style="justify-content:center;">
+            <img src="assets/logo.png" class="logo" alt="Academic Hub Logo"
+              onerror="this.style.display='none'; document.getElementById('logo-text-signup').style.display='block';">
+            <span id="logo-text-signup" style="display:none;">Academic Hub</span>
+          </div>
+        </div>
+        <h1>Create Account</h1>
+        <p class="subtitle">Join your academic community</p>
+
+        <div class="role-toggle" id="signupRoleToggle">
+          <button type="button" class="active" data-role="student" onclick="setSignupRole('student')">🎓
+            Student</button>
+          <button type="button" data-role="teacher" onclick="setSignupRole('teacher')">👨‍🏫 Teacher</button>
+        </div>
+
+        <form onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label for="signupName">Full Name</label>
+            <div class="input-icon">
+              <span class="icon">👤</span>
+              <input type="text" id="signupName" placeholder="Your full name" required>
+            </div>
+          </div>
+          <div class="form-group" id="rollNumberGroup">
+            <label for="signupRoll">Roll Number</label>
+            <div class="input-icon">
+              <span class="icon">🆔</span>
+              <input type="text" id="signupRoll" placeholder="e.g. 2021CSE001">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupEmail">Email</label>
+            <div class="input-icon">
+              <span class="icon">📧</span>
+              <input type="email" id="signupEmail" placeholder="you@iiitsurat.ac.in" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password</label>
+            <div class="input-icon">
+              <span class="icon">🔒</span>
+              <input type="password" id="signupPassword" placeholder="Min 6 characters" required minlength="6">
+            </div>
+          </div>
+          <div class="form-group" id="passkeyGroup" style="display:none;">
+            <label for="signupPasskey">Teacher Passkey</label>
+            <div class="input-icon">
+              <span class="icon">🔑</span>
+              <input type="password" id="signupPasskey" placeholder="Enter teacher passkey">
+            </div>
+          </div>
+          <div id="signupError" class="error-msg"></div>
+          <button type="submit" class="btn btn-primary" id="signupBtn">Create Account →</button>
+        </form>
+
+        <p class="auth-switch">Already have an account? <a href="#" onclick="showLogin(); return false;">Sign In</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="script.js"></script>
+  <script>
+    // Check if already logged in
+    if (getCurrentUser()) { window.location.href = 'dashboard.html'; }
+    initTheme();
+  </script>
+</body>
+
+</html>

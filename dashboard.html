@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Unified Academic Hub - Your academic dashboard for subjects, attendance, and grades.">
+  <title>Dashboard — Academic Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="logo-container">
+          <img src="assets/logo.png" class="logo" alt="Academic Hub"
+            onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+          <span id="logo-text" style="display:none;">Academic Hub</span>
+        </a>
+        <button class="menu-toggle" onclick="toggleSidebar()">✕</button>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="section-label">Main</div>
+        <a href="dashboard.html" class="active"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="inbox.html"><span class="nav-icon">💬</span> Messages <span id="sidebarMsgBadge"></span></a>
+
+        <div class="section-label">Subjects</div>
+        <div id="sidebarSubjects"><!-- Filled by JS --></div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="userAvatar"></div>
+          <div class="user-info">
+            <div class="name" id="userName"></div>
+            <div class="role" id="userRole"></div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm w-full mt-2" onclick="logout()" id="logoutBtn">🚪 Sign Out</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- MAIN -->
+    <main class="main-content">
+      <div class="top-bar">
+        <div class="flex items-center gap-3">
+          <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+          <h2>Dashboard</h2>
+        </div>
+        <div class="top-bar-actions">
+          <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme"></button>
+        </div>
+      </div>
+
+      <div class="page-content">
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <!-- Teacher: Create Subject -->
+        <div id="teacherActions" class="hidden mb-4">
+          <button class="btn btn-primary" onclick="openCreateSubjectModal()">➕ Create New Subject</button>
+        </div>
+
+        <!-- Subjects -->
+        <div class="flex justify-between items-center mb-4">
+          <h3 style="font-size:1.15rem;font-weight:700;">📚 Your Subjects</h3>
+          <div id="studentActions" class="hidden">
+            <button class="btn btn-secondary btn-sm" onclick="openJoinSubjectModal()">🔗 Join Subject</button>
+          </div>
+        </div>
+        <div class="subjects-grid" id="subjectsGrid"></div>
+        <div id="noSubjects" class="empty-state hidden">
+          <div class="icon">📭</div>
+          <h3>No Subjects Yet</h3>
+          <p id="noSubjectsMsg"></p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- CREATE SUBJECT MODAL -->
+  <div class="modal-overlay hidden" id="createSubjectModal">
+    <div class="modal">
+      <h2>➕ Create New Subject</h2>
+      <div class="form-group">
+        <label for="subjectName">Subject Name</label>
+        <input type="text" id="subjectName" placeholder="e.g. Data Structures" required>
+      </div>
+      <div class="form-group">
+        <label for="subjectCode">Subject Code</label>
+        <input type="text" id="subjectCode" placeholder="e.g. CS201" required>
+      </div>
+      <div id="createSubjectError" class="error-msg"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('createSubjectModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="createSubject()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JOIN SUBJECT MODAL -->
+  <div class="modal-overlay hidden" id="joinSubjectModal">
+    <div class="modal">
+      <h2>🔗 Join a Subject</h2>
+      <p style="color:var(--text-secondary);margin-bottom:16px;">Select a subject to enroll in:</p>
+      <div id="availableSubjects"></div>
+      <div id="joinSubjectError" class="error-msg"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('joinSubjectModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="script.js"></script>
+  <script>
+    requireAuth();
+    initTheme();
+    initDashboard();
+  </script>
+</body>
+
+</html>

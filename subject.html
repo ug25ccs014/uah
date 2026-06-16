@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Subject page - Materials, Assignments, Announcements, Attendance, and Marks.">
+  <title>Subject — Academic Hub</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app-layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="dashboard.html" class="logo-container">
+          <img src="assets/logo.png" class="logo" alt="Academic Hub"
+            onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';">
+          <span id="logo-text" style="display:none;">Academic Hub</span>
+        </a>
+        <button class="menu-toggle" onclick="toggleSidebar()">✕</button>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="section-label">Main</div>
+        <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="inbox.html"><span class="nav-icon">💬</span> Messages <span id="sidebarMsgBadge"></span></a>
+        <div class="section-label">Subjects</div>
+        <div id="sidebarSubjects"></div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar" id="userAvatar"></div>
+          <div class="user-info">
+            <div class="name" id="userName"></div>
+            <div class="role" id="userRole"></div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm w-full mt-2" onclick="logout()">🚪 Sign Out</button>
+      </div>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- MAIN -->
+    <main class="main-content">
+      <div class="top-bar">
+        <div class="flex items-center gap-3">
+          <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+          <h2 id="subjectTitle">Subject</h2>
+        </div>
+        <div class="top-bar-actions">
+          <span class="badge badge-primary" id="subjectCodeBadge"></span>
+          <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme"></button>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="subject-tabs" id="subjectTabs">
+        <button class="active" onclick="switchTab('materials')">📄 Materials</button>
+        <button onclick="switchTab('assignments')">📝 Assignments</button>
+        <button onclick="switchTab('announcements')">📢 Announcements</button>
+        <button onclick="switchTab('attendance')">✅ Attendance</button>
+        <button onclick="switchTab('marks')">📊 Marks</button>
+        <button onclick="switchTab('messages')">💬 Messages</button>
+      </div>
+
+      <div class="page-content">
+        <!-- MATERIALS TAB -->
+        <div class="tab-content active" id="tab-materials">
+          <div class="flex justify-between items-center mb-4">
+            <h3>📄 Course Materials</h3>
+            <button class="btn btn-primary btn-sm teacher-only hidden" onclick="openModal('addMaterialModal')">➕ Add
+              Material</button>
+          </div>
+          <div class="card">
+            <div class="card-body" id="materialsList"></div>
+          </div>
+        </div>
+
+        <!-- ASSIGNMENTS TAB -->
+        <div class="tab-content" id="tab-assignments">
+          <div class="flex justify-between items-center mb-4">
+            <h3>📝 Assignments</h3>
+            <button class="btn btn-primary btn-sm teacher-only hidden" onclick="openModal('addAssignmentModal')">➕
+              Create Assignment</button>
+          </div>
+          <div class="card">
+            <div class="card-body" id="assignmentsList"></div>
+          </div>
+        </div>
+
+        <!-- ANNOUNCEMENTS TAB -->
+        <div class="tab-content" id="tab-announcements">
+          <div class="flex justify-between items-center mb-4">
+            <h3>📢 Announcements</h3>
+            <button class="btn btn-primary btn-sm teacher-only hidden" onclick="openModal('addAnnouncementModal')">➕
+              Post Announcement</button>
+          </div>
+          <div class="card">
+            <div class="card-body" id="announcementsList"></div>
+          </div>
+        </div>
+
+        <!-- ATTENDANCE TAB -->
+        <div class="tab-content" id="tab-attendance">
+          <div class="flex justify-between items-center mb-4">
+            <h3>✅ Attendance</h3>
+            <button class="btn btn-primary btn-sm teacher-only hidden" onclick="openMarkAttendanceModal()">📋 Mark
+              Attendance</button>
+          </div>
+          <div class="card">
+            <div class="card-body" id="attendanceContent"></div>
+          </div>
+        </div>
+
+        <!-- MARKS TAB -->
+        <div class="tab-content" id="tab-marks">
+          <div class="flex justify-between items-center mb-4">
+            <h3>📊 Marks</h3>
+            <button class="btn btn-primary btn-sm teacher-only hidden" onclick="openAssignMarksModal()">✏️ Assign
+              Marks</button>
+          </div>
+          <div class="card">
+            <div class="card-body" id="marksContent"></div>
+          </div>
+        </div>
+
+        <!-- MESSAGES TAB -->
+        <div class="tab-content" id="tab-messages">
+          <div class="flex justify-between items-center mb-4">
+            <h3>💬 Subject Messages</h3>
+          </div>
+          <div id="subjectMessagesArea"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD MATERIAL MODAL -->
+  <div class="modal-overlay hidden" id="addMaterialModal">
+    <div class="modal">
+      <h2>📄 Add Material</h2>
+      <div class="form-group">
+        <label for="matTitle">Title</label>
+        <input type="text" id="matTitle" placeholder="e.g. Lecture 1 Notes" required>
+      </div>
+      <div class="form-group">
+        <label for="matDesc">Description</label>
+        <textarea id="matDesc" rows="3" placeholder="Brief description..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Upload Method</label>
+        <div class="role-toggle" id="matUploadToggle">
+          <button type="button" class="active" onclick="toggleMatUpload('url')">🔗 URL Link</button>
+          <button type="button" onclick="toggleMatUpload('file')">📁 Upload File</button>
+        </div>
+      </div>
+      <div class="form-group" id="matLinkGroup">
+        <label for="matLink">Link (URL)</label>
+        <input type="url" id="matLink" placeholder="https://...">
+      </div>
+      <div class="form-group hidden" id="matFileGroup">
+        <label for="matFile">Choose File (PDF, DOC, etc.)</label>
+        <input type="file" id="matFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.png,.jpg">
+        <div id="matFileName" style="font-size:0.85rem;color:var(--text-muted);margin-top:6px;"></div>
+      </div>
+      <div class="form-group">
+        <label for="matType">Type</label>
+        <select id="matType">
+          <option value="notes">📝 Notes</option>
+          <option value="pdf">📕 PDF</option>
+          <option value="lecture">🎥 Lecture</option>
+          <option value="other">📎 Other</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('addMaterialModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="addMaterial()">Add Material</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD ASSIGNMENT MODAL -->
+  <div class="modal-overlay hidden" id="addAssignmentModal">
+    <div class="modal">
+      <h2>📝 Create Assignment</h2>
+      <div class="form-group">
+        <label for="asgTitle">Title</label>
+        <input type="text" id="asgTitle" placeholder="Assignment title" required>
+      </div>
+      <div class="form-group">
+        <label for="asgDesc">Description</label>
+        <textarea id="asgDesc" rows="4" placeholder="Assignment details..."></textarea>
+      </div>
+      <div class="form-group">
+        <label for="asgFile">📎 Attach File (PDF, Questions, etc.)</label>
+        <input type="file" id="asgFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.png,.jpg">
+        <div id="asgFileName" style="font-size:0.85rem;color:var(--text-muted);margin-top:6px;"></div>
+      </div>
+      <div class="form-group">
+        <label for="asgDeadline">Deadline</label>
+        <input type="datetime-local" id="asgDeadline" required>
+      </div>
+      <div class="form-group" style="display:flex; gap:16px; align-items:flex-end;">
+        <div style="flex:1;">
+          <label for="asgMaxPoints">Grade Points</label>
+          <input type="number" id="asgMaxPoints" placeholder="100" min="0">
+        </div>
+        <div style="flex:1; padding-bottom:10px;">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+            <input type="checkbox" id="asgUngraded"
+              onchange="document.getElementById('asgMaxPoints').disabled = this.checked; if(this.checked) document.getElementById('asgMaxPoints').value = '';"
+              style="width:auto;">
+            <span style="text-transform:none; font-weight:normal;">Ungraded</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('addAssignmentModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="addAssignment()">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUBMIT ASSIGNMENT MODAL (Student) -->
+  <div class="modal-overlay hidden" id="submitAssignmentModal">
+    <div class="modal">
+      <h2>📤 Submit Assignment</h2>
+      <p style="color:var(--text-secondary);margin-bottom:12px;" id="submitAsgTitle"></p>
+      <div class="form-group">
+        <label for="submissionFile">📎 Upload Your Submission</label>
+        <input type="file" id="submissionFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.zip,.png,.jpg">
+      </div>
+      <div class="form-group">
+        <label for="submissionNote">Note (optional)</label>
+        <textarea id="submissionNote" rows="2" placeholder="Any comments..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('submitAssignmentModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitAssignment()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD ANNOUNCEMENT MODAL -->
+  <div class="modal-overlay hidden" id="addAnnouncementModal">
+    <div class="modal">
+      <h2>📢 Post Announcement</h2>
+      <div class="form-group">
+        <label for="annTitle">Title</label>
+        <input type="text" id="annTitle" placeholder="Announcement title" required>
+      </div>
+      <div class="form-group">
+        <label for="annContent">Content</label>
+        <textarea id="annContent" rows="4" placeholder="Announcement details..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('addAnnouncementModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="addAnnouncement()">Post</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARK ATTENDANCE MODAL -->
+  <div class="modal-overlay hidden" id="markAttendanceModal">
+    <div class="modal">
+      <h2>📋 Mark Attendance</h2>
+      <div class="form-group">
+        <label for="attendanceDate">Date</label>
+        <input type="date" id="attendanceDate" required>
+      </div>
+      <div id="attendanceStudentsList"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('markAttendanceModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveAttendance()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW STUDENT ATTENDANCE MODAL -->
+  <div class="modal-overlay hidden" id="viewStudentAttendanceModal">
+    <div class="modal">
+      <h2>📅 <span id="viewStudentAttendanceName">Student</span>'s Attendance</h2>
+      <div id="viewStudentAttendanceContent" style="margin-top: 16px;"></div>
+      <div class="modal-actions" style="margin-top: 24px;">
+        <button class="btn btn-secondary" onclick="closeModal('viewStudentAttendanceModal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSIGN MARKS MODAL -->
+  <div class="modal-overlay hidden" id="assignMarksModal">
+    <div class="modal">
+      <h2>✏️ Assign Marks</h2>
+      <div class="form-group">
+        <label for="examName">Exam / Test Name</label>
+        <input type="text" id="examName" placeholder="e.g. Midterm" required>
+      </div>
+      <div class="form-group">
+        <label for="totalMarks">Total Marks</label>
+        <input type="number" id="totalMarks" placeholder="100" required min="1">
+      </div>
+      <div id="marksStudentsList"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('assignMarksModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMarks()">Save Marks</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEND MESSAGE MODAL -->
+  <div class="modal-overlay hidden" id="sendMsgModal">
+    <div class="modal">
+      <h2>💬 Send Message</h2>
+      <div class="form-group">
+        <label for="msgRecipient">To</label>
+        <select id="msgRecipient"></select>
+      </div>
+      <div class="form-group">
+        <label for="msgContent">Message</label>
+        <textarea id="msgContent" rows="4" placeholder="Type your message..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="closeModal('sendMsgModal')">Cancel</button>
+        <button class="btn btn-primary" onclick="sendSubjectMessage()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <script src="script.js"></script>
+  <script>
+    requireAuth();
+    initTheme();
+    initSubjectPage();
+  </script>
+</body>
+
+</html>
